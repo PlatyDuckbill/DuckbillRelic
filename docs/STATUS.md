@@ -9,6 +9,8 @@
 - 범위: 현재 출시된 모든 레릭 무기 6계열·도구 5계열과 남은 재료 합산. [FEATURES](product/FEATURES.md).
 - 첫 화면 구조 합의: 직업×단계 표 + 상세 패널, 탭은 무기 / 도구 / 남은 재료. [SCREENS](product/SCREENS.md).
 - 목업 2차본: [mockups/mockup-v2.html](mockups/mockup-v2.html) (공유 사본: https://claude.ai/artifact/1bddKyBX15dFaEfaHkxENb, 비공개).
+- 원격 저장소: https://github.com/PlatyDuckbill/DuckbillRelic (`main`, 2026-11-10 첫 푸시).
+- 공용 설치 목록 [DuckbillRepo](https://github.com/PlatyDuckbill/DuckbillRepo)에 등록했다. 아직 `repo/release.json`이 없어 첫 배포 대기로 건너뛴다. 첫 배포 때 Tweak·Fisher와 같은 절차(버전 태그·정식 Release·`DuckbillRelic-<4자리 버전>.zip`과 `.zip.sha256`·태그 고정 아이콘 `assets/*.png`, 그다음 `main`의 `repo/release.json` 갱신)를 따르면 자동으로 목록에 추가된다.
 
 ## 남은 확인·결정
 

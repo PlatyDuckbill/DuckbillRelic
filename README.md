@@ -6,4 +6,4 @@ FFXIV(KR·글로벌)의 레릭 무기·도구 진행을 직업별로 보여주�
 - 레릭 보유·업적 기록으로 완료 단계를 자동 판정하고, 확인할 수 없는 단계는 수동 표시
 - 목표로 고른 직업·계열의 남은 재료와 필요한 석판을 합산
 
-현재는 기획 단계이며 코드는 없습니다. 진행 상황은 [docs/STATUS.md](docs/STATUS.md), 문서 목록은 [docs/README.md](docs/README.md)를 보세요.
+현재는 기획 단계이며 코드는 없습니다. 첫 배포 후 공용 설치 목록 [DuckbillRepo](https://github.com/PlatyDuckbill/DuckbillRepo)에서 설치할 수 있습니다. 진행 상황은 [docs/STATUS.md](docs/STATUS.md), 문서 목록은 [docs/README.md](docs/README.md)를 보세요.
