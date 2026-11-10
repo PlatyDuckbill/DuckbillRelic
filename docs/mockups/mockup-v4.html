@@ -236,22 +236,22 @@ table.mx { border-collapse: separate; border-spacing: 0; font-size: 12px; }
 
   const st = (n, mats, x) => Object.assign({n, mats: mats || null}, x || {});
   const once = (id, per) => [id, per, true];
-  // 단계 이름: 게임 아이템에 붙는 접미어만. 접미어가 없는 단계는 번호만 (2026-11-10 결정)
+  // 단계 이름: 게임 아이템에 붙는 접미어. 공통 접미어가 없는 단계는 사용자가 정한 이름 (2026-11-10 결정)
   const SERIES = [
     {id:'zodiac', tab:'weapon', name:'조디악 웨폰', ach:[1], jobs:['나','전','백','학','몽','용','닌','음','흑','솬'],
      items:{나:['커르타나','커르타나: 제니스','커르타나: 아트마','커르타나: 아니무스','커르타나: 노우스','커르타나: 넥서스','엑스칼리버','엑스칼리버: 제타']},
-     stages:[ st('',[['damgum',1]]), st('제니스',[['yeong',3]]), st('아트마',[['atma',12]]), st('아니무스',[['book',9]],{relicnote:true}),
-              st('노우스',[['ink',3],['materia',75],['alex',75]]), st('넥서스',[['nexus',2000]]), st('',[['pure',1],['sung',1],['matter',1],['scroll',1]]), st('제타') ]},
+     stages:[ st('고대의 무기',[['damgum',1]]), st('제니스',[['yeong',3]]), st('아트마',[['atma',12]]), st('아니무스',[['book',9]],{relicnote:true}),
+              st('노우스',[['ink',3],['materia',75],['alex',75]]), st('넥서스',[['nexus',2000]]), st('조디악',[['pure',1],['sung',1],['matter',1],['scroll',1]]), st('제타') ]},
     {id:'anima', tab:'weapon', name:'아니마 웨폰', ach:[3,4,5,6,7,8], jobs:['나','전','암','백','학','점','몽','용','닌','음','기','흑','솬'],
      items:{나:['오트클레르: 아니마','오트클레르: 각성','알마스','알마스: 초전도','제후의 검','벼려진 제후의 검','에티르','에티르: 룩스']},
-     stages:[ st('아니마',[['star',1],['shadow',1]]), st('각성',[],{note:'지정 던전 10곳을 차례로 공략하는 단계입니다.'}), st('',[['gum',1],['harden',1],['holy',1],['cata',1]]), st('초전도',[['oil',5]]),
-              st('',[['sand',60],['rock',60]]), st('벼려진',[['cluster',50]]), st('',[['crystal',15]]), st('룩스',[['aink',1]]) ]},
+     stages:[ st('아니마',[['star',1],['shadow',1]]), st('각성',[],{note:'지정 던전 10곳을 차례로 공략하는 단계입니다.'}), st('새로운 아니마',[['gum',1],['harden',1],['holy',1],['cata',1]]), st('초전도',[['oil',5]]),
+              st('강화된 아니마',[['sand',60],['rock',60]]), st('벼려진',[['cluster',50]]), st('진정한 아니마',[['crystal',15]]), st('룩스',[['aink',1]]) ]},
     {id:'eureka', tab:'weapon', name:'에우레카 웨폰', ach:[1,2,3,4], jobs:['나','전','암','백','학','점','몽','용','닌','사','음','기','흑','솬','적'],
      items:{나:['갤러틴: 아네모스','엘리멘탈 한손검','피로스 한손검','안테아: 에우레카','안테아: 맞춤형']},
      stages:[ st('아네모스',[['unasp',1300],['pazu',3]]), st('엘리멘탈',[['iceunasp',31],['pagos',500],['louhi',5]]), st('피로스',[['pyros',650],['penthe',5]]), st('에우레카',[['hyda',350],['dragon',5]]), st('맞춤형',[['frag',100]]) ]},
     {id:'resist', tab:'weapon', name:'레지스탕스 웨폰', ach:[1,3,5,6], jobs:['나','전','암','건','백','학','점','몽','용','닌','사','음','기','무','흑','솬','적'],
      items:{나:['오너바운드','보강된 오너바운드','오너바운드: 기억','법령 바스타드소드','보강된 법령 바스타드소드','군힐드의 검의 명예']},
-     stages:[ st('',[['scale',4]],{firstFree:true}), st('보강된',[['tortured',20],['sorrow',20],['harrow',20]]), st('기억',[['brave',6]]), st('법령',[['bitter',15]]), st('보강된 법령',[['loath',15]]), st('군힐드의 검',[['passion',15]]) ]},
+     stages:[ st('레지스탕스',[['scale',4]],{firstFree:true}), st('보강된',[['tortured',20],['sorrow',20],['harrow',20]]), st('기억',[['brave',6]]), st('법령',[['bitter',15]]), st('보강된 법령',[['loath',15]]), st('군힐드의 검',[['passion',15]]) ]},
     {id:'mander', tab:'weapon', name:'맨더빌 웨폰', ach:[1,2,3,4], jobs:ALL21.filter(j => j !== '바' && j !== '픽'),
      items:{나:['맨더빌 한손검','훌륭한 맨더빌 한손검','당당한 맨더빌 한손검',null]},
      stages:[ st('맨더빌',[['meteo',3]]), st('훌륭한',[['chond',3]]), st('당당한',[['achond',3]]), st('맨더빌한',[['crlite',3]]) ]},
