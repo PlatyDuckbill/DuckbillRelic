@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="CommandHelp" xml:space="preserve"><value>Open DuckbillRelic.</value></data>
+  <data name="CommandConflict" xml:space="preserve"><value>Command {0} is already in use by another plugin.</value></data>
+  <data name="TabWeapons" xml:space="preserve"><value>Weapons</value></data>
+  <data name="TabTools" xml:space="preserve"><value>Tools</value></data>
+  <data name="HelpButton" xml:space="preserve"><value>Help</value></data>
+  <data name="HelpShapes" xml:space="preserve"><value>Cell shapes</value></data>
+  <data name="HelpLastRead" xml:space="preserve"><value>Last read</value></data>
+  <data name="HelpInventoryLive" xml:space="preserve"><value>Inventory and Armoury Chest: live</value></data>
+  <data name="HelpAchievementsAt" xml:space="preserve"><value>Achievements: {0}</value></data>
+  <data name="HelpAchievementsNone" xml:space="preserve"><value>Achievements: no record yet</value></data>
+  <data name="HelpAchievementsLive" xml:space="preserve"><value>Achievements: loaded now</value></data>
+  <data name="ResultDone" xml:space="preserve"><value>Done</value></data>
+  <data name="ResultNext" xml:space="preserve"><value>Next stage</value></data>
+  <data name="ResultNotDone" xml:space="preserve"><value>Not done</value></data>
+  <data name="ResultUnknown" xml:space="preserve"><value>Not confirmed yet</value></data>
+  <data name="ResultNotApplicable" xml:space="preserve"><value>Not available for this job</value></data>
+  <data name="ResultManualMark" xml:space="preserve"><value>Marked by you</value></data>
+  <data name="AchievementBanner" xml:space="preserve"><value>No achievement record yet, so some stages could not be confirmed. Open the Achievements window in game once.</value></data>
+  <data name="NotLoggedIn" xml:space="preserve"><value>Log in to a character to see progress.</value></data>
+  <data name="SelectCellHint" xml:space="preserve"><value>Select a cell to see details.</value></data>
+  <data name="DetailHeader" xml:space="preserve"><value>{0} · {1} stage {2}</value></data>
+  <data name="EvidenceOwned" xml:space="preserve"><value>Found in your Armoury Chest or inventory</value></data>
+  <data name="EvidenceObserved" xml:space="preserve"><value>Seen earlier in your Armoury Chest or inventory</value></data>
+  <data name="EvidenceAchievement" xml:space="preserve"><value>Confirmed by achievement</value></data>
+  <data name="EvidenceImplied" xml:space="preserve"><value>Done because a later stage is confirmed</value></data>
+  <data name="EvidenceManual" xml:space="preserve"><value>Marked done by you</value></data>
+  <data name="UnknownReason" xml:space="preserve"><value>Open the Achievements window once to confirm.</value></data>
+  <data name="MarkDoneUpTo" xml:space="preserve"><value>Mark done up to here</value></data>
+  <data name="ClearManualFrom" xml:space="preserve"><value>Remove your mark from here</value></data>
+  <data name="MoreActions" xml:space="preserve"><value>More</value></data>
+  <data name="CosmicNote" xml:space="preserve"><value>Check versions and research data in the game&apos;s Cosmic Exploration research screen.</value></data>
+  <data name="SeriesDisabled" xml:space="preserve"><value>Some relic data did not match this game version, so these series are hidden: {0}</value></data>
+  <data name="StageZodiac1" xml:space="preserve"><value>Base</value></data>
+  <data name="StageZodiac2" xml:space="preserve"><value>Zenith</value></data>
+  <data name="StageZodiac3" xml:space="preserve"><value>Atma</value></data>
+  <data name="StageZodiac4" xml:space="preserve"><value>Animus</value></data>
+  <data name="StageZodiac5" xml:space="preserve"><value>Novus</value></data>
+  <data name="StageZodiac6" xml:space="preserve"><value>Nexus</value></data>
+  <data name="StageZodiac7" xml:space="preserve"><value>Zodiac</value></data>
+  <data name="StageZodiac8" xml:space="preserve"><value>Zeta</value></data>
+  <data name="StageAnima1" xml:space="preserve"><value>Animated</value></data>
+  <data name="StageAnima2" xml:space="preserve"><value>Awoken</value></data>
+  <data name="StageAnima3" xml:space="preserve"><value>Anima</value></data>
+  <data name="StageAnima4" xml:space="preserve"><value>Hyperconductive</value></data>
+  <data name="StageAnima5" xml:space="preserve"><value>Reconditioned</value></data>
+  <data name="StageAnima6" xml:space="preserve"><value>Sharpened</value></data>
+  <data name="StageAnima7" xml:space="preserve"><value>Complete</value></data>
+  <data name="StageAnima8" xml:space="preserve"><value>Lux</value></data>
+  <data name="StageEureka1" xml:space="preserve"><value>Anemos</value></data>
+  <data name="StageEureka2" xml:space="preserve"><value>Elemental</value></data>
+  <data name="StageEureka3" xml:space="preserve"><value>Pyros</value></data>
+  <data name="StageEureka4" xml:space="preserve"><value>Eureka</value></data>
+  <data name="StageEureka5" xml:space="preserve"><value>Physeos</value></data>
+  <data name="StageResistance1" xml:space="preserve"><value>Resistance</value></data>
+  <data name="StageResistance2" xml:space="preserve"><value>Augmented</value></data>
+  <data name="StageResistance3" xml:space="preserve"><value>Recollection</value></data>
+  <data name="StageResistance4" xml:space="preserve"><value>Law&apos;s Order</value></data>
+  <data name="StageResistance5" xml:space="preserve"><value>Augmented Law&apos;s Order</value></data>
+  <data name="StageResistance6" xml:space="preserve"><value>Blades</value></data>
+  <data name="StageManderville1" xml:space="preserve"><value>Manderville</value></data>
+  <data name="StageManderville2" xml:space="preserve"><value>Amazing</value></data>
+  <data name="StageManderville3" xml:space="preserve"><value>Majestic</value></data>
+  <data name="StageManderville4" xml:space="preserve"><value>Mandervillous</value></data>
+  <data name="StagePhantom1" xml:space="preserve"><value>Penumbrae</value></data>
+  <data name="StagePhantom2" xml:space="preserve"><value>Umbrae</value></data>
+  <data name="StagePhantom3" xml:space="preserve"><value>Obscurum</value></data>
+  <data name="StagePhantom4" xml:space="preserve"><value>Eclipticum</value></data>
+  <data name="StagePhantom5" xml:space="preserve"><value>Occultum</value></data>
+  <data name="StageSkysteel1" xml:space="preserve"><value>Skysteel</value></data>
+  <data name="StageSkysteel2" xml:space="preserve"><value>Skysteel +1</value></data>
+  <data name="StageSkysteel3" xml:space="preserve"><value>Dragonsung</value></data>
+  <data name="StageSkysteel4" xml:space="preserve"><value>Augmented Dragonsung</value></data>
+  <data name="StageSkysteel5" xml:space="preserve"><value>Skysung</value></data>
+  <data name="StageSkysteel6" xml:space="preserve"><value>Skybuilders&apos;</value></data>
+  <data name="StageSplendorous1" xml:space="preserve"><value>Splendorous</value></data>
+  <data name="StageSplendorous2" xml:space="preserve"><value>Augmented Splendorous</value></data>
+  <data name="StageSplendorous3" xml:space="preserve"><value>Crystalline</value></data>
+  <data name="StageSplendorous4" xml:space="preserve"><value>Chora-Zoi&apos;s Crystalline</value></data>
+  <data name="StageSplendorous5" xml:space="preserve"><value>Brilliant</value></data>
+  <data name="StageSplendorous6" xml:space="preserve"><value>Vrandtic Visionary&apos;s</value></data>
+  <data name="StageSplendorous7" xml:space="preserve"><value>Lodestar</value></data>
+  <data name="StageCosmic1" xml:space="preserve"><value>Cosmic</value></data>
+  <data name="StageCosmic2" xml:space="preserve"><value>Stellar</value></data>
+  <data name="StageCosmic3" xml:space="preserve"><value>Hyper</value></data>
+  <data name="StageCosmic4" xml:space="preserve"><value>Stars</value></data>
+</root>

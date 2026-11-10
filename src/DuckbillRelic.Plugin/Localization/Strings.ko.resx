@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="CommandHelp" xml:space="preserve"><value>DuckbillRelic을 엽니다.</value></data>
+  <data name="CommandConflict" xml:space="preserve"><value>명령어 {0}을(를) 다른 플러그인이 이미 사용 중입니다.</value></data>
+  <data name="TabWeapons" xml:space="preserve"><value>무기</value></data>
+  <data name="TabTools" xml:space="preserve"><value>도구</value></data>
+  <data name="HelpButton" xml:space="preserve"><value>도움말</value></data>
+  <data name="HelpShapes" xml:space="preserve"><value>칸 모양</value></data>
+  <data name="HelpLastRead" xml:space="preserve"><value>마지막으로 읽은 정보</value></data>
+  <data name="HelpInventoryLive" xml:space="preserve"><value>소지품·장비함: 실시간</value></data>
+  <data name="HelpAchievementsAt" xml:space="preserve"><value>업적: {0}</value></data>
+  <data name="HelpAchievementsNone" xml:space="preserve"><value>업적: 기록 없음</value></data>
+  <data name="HelpAchievementsLive" xml:space="preserve"><value>업적: 지금 불러옴</value></data>
+  <data name="ResultDone" xml:space="preserve"><value>완료</value></data>
+  <data name="ResultNext" xml:space="preserve"><value>다음 단계</value></data>
+  <data name="ResultNotDone" xml:space="preserve"><value>미완료</value></data>
+  <data name="ResultUnknown" xml:space="preserve"><value>확인 전</value></data>
+  <data name="ResultNotApplicable" xml:space="preserve"><value>해당 직업 없음</value></data>
+  <data name="ResultManualMark" xml:space="preserve"><value>직접 완료 표시</value></data>
+  <data name="AchievementBanner" xml:space="preserve"><value>업적 기록이 없어 일부 단계를 확인하지 못했습니다. 게임에서 업적 화면을 한 번 열어 주세요.</value></data>
+  <data name="NotLoggedIn" xml:space="preserve"><value>캐릭터에 접속하면 진행이 표시됩니다.</value></data>
+  <data name="SelectCellHint" xml:space="preserve"><value>칸을 누르면 상세가 나옵니다.</value></data>
+  <data name="DetailHeader" xml:space="preserve"><value>{0} · {1} {2}단계</value></data>
+  <data name="EvidenceOwned" xml:space="preserve"><value>장비함·소지품에서 확인</value></data>
+  <data name="EvidenceObserved" xml:space="preserve"><value>이전에 장비함·소지품에서 확인</value></data>
+  <data name="EvidenceAchievement" xml:space="preserve"><value>업적으로 확인</value></data>
+  <data name="EvidenceImplied" xml:space="preserve"><value>윗 단계가 확인되어 완료</value></data>
+  <data name="EvidenceManual" xml:space="preserve"><value>직접 완료 표시</value></data>
+  <data name="UnknownReason" xml:space="preserve"><value>업적 화면을 한 번 열면 확인됩니다.</value></data>
+  <data name="MarkDoneUpTo" xml:space="preserve"><value>여기까지 완료로 표시</value></data>
+  <data name="ClearManualFrom" xml:space="preserve"><value>여기부터 직접 표시 해제</value></data>
+  <data name="MoreActions" xml:space="preserve"><value>더 보기</value></data>
+  <data name="CosmicNote" xml:space="preserve"><value>세부 버전과 연구 데이터는 게임의 우주 연구 화면에서 확인하세요.</value></data>
+  <data name="SeriesDisabled" xml:space="preserve"><value>일부 레릭 데이터가 이 게임 버전과 맞지 않아 다음 계열을 숨겼습니다: {0}</value></data>
+  <data name="StageZodiac1" xml:space="preserve"><value>고대의 무기</value></data>
+  <data name="StageZodiac2" xml:space="preserve"><value>제니스</value></data>
+  <data name="StageZodiac3" xml:space="preserve"><value>아트마</value></data>
+  <data name="StageZodiac4" xml:space="preserve"><value>아니무스</value></data>
+  <data name="StageZodiac5" xml:space="preserve"><value>노우스</value></data>
+  <data name="StageZodiac6" xml:space="preserve"><value>넥서스</value></data>
+  <data name="StageZodiac7" xml:space="preserve"><value>조디악</value></data>
+  <data name="StageZodiac8" xml:space="preserve"><value>제타</value></data>
+  <data name="StageAnima1" xml:space="preserve"><value>아니마</value></data>
+  <data name="StageAnima2" xml:space="preserve"><value>각성</value></data>
+  <data name="StageAnima3" xml:space="preserve"><value>새로운 아니마</value></data>
+  <data name="StageAnima4" xml:space="preserve"><value>초전도</value></data>
+  <data name="StageAnima5" xml:space="preserve"><value>강화된 아니마</value></data>
+  <data name="StageAnima6" xml:space="preserve"><value>벼려진</value></data>
+  <data name="StageAnima7" xml:space="preserve"><value>진정한 아니마</value></data>
+  <data name="StageAnima8" xml:space="preserve"><value>룩스</value></data>
+  <data name="StageEureka1" xml:space="preserve"><value>아네모스</value></data>
+  <data name="StageEureka2" xml:space="preserve"><value>엘리멘탈</value></data>
+  <data name="StageEureka3" xml:space="preserve"><value>피로스</value></data>
+  <data name="StageEureka4" xml:space="preserve"><value>에우레카</value></data>
+  <data name="StageEureka5" xml:space="preserve"><value>맞춤형</value></data>
+  <data name="StageResistance1" xml:space="preserve"><value>레지스탕스</value></data>
+  <data name="StageResistance2" xml:space="preserve"><value>보강된</value></data>
+  <data name="StageResistance3" xml:space="preserve"><value>기억</value></data>
+  <data name="StageResistance4" xml:space="preserve"><value>법령</value></data>
+  <data name="StageResistance5" xml:space="preserve"><value>보강된 법령</value></data>
+  <data name="StageResistance6" xml:space="preserve"><value>군힐드의 검</value></data>
+  <data name="StageManderville1" xml:space="preserve"><value>맨더빌</value></data>
+  <data name="StageManderville2" xml:space="preserve"><value>훌륭한</value></data>
+  <data name="StageManderville3" xml:space="preserve"><value>당당한</value></data>
+  <data name="StageManderville4" xml:space="preserve"><value>맨더빌한</value></data>
+  <data name="StagePhantom1" xml:space="preserve"><value>반그림자</value></data>
+  <data name="StagePhantom2" xml:space="preserve"><value>그림자</value></data>
+  <data name="StagePhantom3" xml:space="preserve"><value>어둠그림자</value></data>
+  <data name="StagePhantom4" xml:space="preserve"><value>달그림자</value></data>
+  <data name="StagePhantom5" xml:space="preserve"><value>숨은그림자</value></data>
+  <data name="StageSkysteel1" xml:space="preserve"><value>하늘강철</value></data>
+  <data name="StageSkysteel2" xml:space="preserve"><value>하늘강철+1</value></data>
+  <data name="StageSkysteel3" xml:space="preserve"><value>용시</value></data>
+  <data name="StageSkysteel4" xml:space="preserve"><value>보강된 용시</value></data>
+  <data name="StageSkysteel5" xml:space="preserve"><value>창천시</value></data>
+  <data name="StageSkysteel6" xml:space="preserve"><value>창천건설자</value></data>
+  <data name="StageSplendorous1" xml:space="preserve"><value>모웬</value></data>
+  <data name="StageSplendorous2" xml:space="preserve"><value>보강된 모웬</value></data>
+  <data name="StageSplendorous3" xml:space="preserve"><value>공예관</value></data>
+  <data name="StageSplendorous4" xml:space="preserve"><value>조이의 공예관</value></data>
+  <data name="StageSplendorous5" xml:space="preserve"><value>조이의 빛나는</value></data>
+  <data name="StageSplendorous6" xml:space="preserve"><value>노르브란트 선각자</value></data>
+  <data name="StageSplendorous7" xml:space="preserve"><value>노르브란트 길잡이</value></data>
+  <data name="StageCosmic1" xml:space="preserve"><value>우주</value></data>
+  <data name="StageCosmic2" xml:space="preserve"><value>외계</value></data>
+  <data name="StageCosmic3" xml:space="preserve"><value>초공간</value></data>
+  <data name="StageCosmic4" xml:space="preserve"><value>별들의</value></data>
+</root>

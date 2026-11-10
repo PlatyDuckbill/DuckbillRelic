@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DuckbillRelic.Core/DuckbillRelic.Core.csproj" />
+    <Project Path="src/DuckbillRelic.Plugin/DuckbillRelic.Plugin.csproj" />
+  </Folder>
+</Solution>

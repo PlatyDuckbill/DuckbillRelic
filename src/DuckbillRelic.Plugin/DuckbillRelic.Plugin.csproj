@@ -1,0 +1,23 @@
+<Project Sdk="Dalamud.NET.Sdk/15.0.0">
+  <PropertyGroup>
+    <AssemblyName>DuckbillRelic</AssemblyName>
+    <RootNamespace>DuckbillRelic.Plugin</RootNamespace>
+    <Version>0.1.0.0</Version>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Author>PlatyDuckbill</Author>
+    <Name>DuckbillRelic</Name>
+    <Punchline>See every job's relic progress at a glance.</Punchline>
+    <Description>See every job's relic weapon and tool progress at a glance.&#xA;&#xA;• Job × stage table for all relic weapons and the Skysteel, Splendorous and Cosmic tools.&#xA;• Completed stages come from relics you hold and from per-job achievements after you open the Achievements window once.&#xA;• Mark stages yourself when the game cannot show them.&#xA;&#xA;Open: /duckbillrelic or /dbrl.&#xA;UI: English / Korean. Game names follow your client.&#xA;&#xA;Does not automate anything or send anything to the server.</Description>
+    <RepoUrl>https://github.com/PlatyDuckbill/DuckbillRelic</RepoUrl>
+    <Tags>relic;weapon;tool;progress;achievement;한국어</Tags>
+    <DalamudApiLevel>15</DalamudApiLevel>
+    <ApplicableVersion>any</ApplicableVersion>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <_DuckbillRequiredReference Include="Dalamud;Dalamud.Bindings.ImGui;FFXIVClientStructs;Lumina;Lumina.Excel;Serilog" />
+    <ProjectReference Include="../DuckbillRelic.Core/DuckbillRelic.Core.csproj" />
+    <EmbeddedResource Include="../../data/relic-catalog.v1.json" LogicalName="DuckbillRelic.RelicCatalog" />
+  </ItemGroup>
+  <Import Project="../../build/DalamudReferences.targets" />
+</Project>

@@ -1,7 +1,23 @@
-bin/
-obj/
+# .NET build output
+**/bin/
+**/obj/
 out/
+artifacts/
+.dotnet/
+.cache/
+
+# Local editor / OS state
 .vs/
+.idea/
 *.user
+*.suo
+
+# Machine-specific settings, logs and credentials
+.env
+.env.*
+*.local.json
+*.log
+
+# Local research scratch (not part of the repository)
 research_notes/
 reports/
