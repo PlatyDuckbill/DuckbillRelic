@@ -1,0 +1,577 @@
+<title>DuckbillRelic 목업</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Cinzel:wght@600&display=swap">
+<style>
+/* Layout: 위쪽 시연 막대(목업 전용) + 게임 안 플러그인 화면 재현. 인게임 ImGui 다크 화면이라 단일 다크 테마로 고정. */
+:root {
+  color-scheme: dark;
+  --desk: #121419; --win: #1b1e25; --win-2: #22262f; --win-3: #2b303b;
+  --line: #353b48; --line-soft: #2c313b; --col: rgba(125, 183, 216, .07);
+  --fg: #e8e3d6; --muted: #959cab; --faint: #6b7282;
+  --gold: #d8b25a; --gold-dim: #8a7240; --gold-ink: #241c08;
+  --sky: #7db7d8; --ok: #7fc59a; --warn: #e0a057; --na: #14161b; --todo: #7a8294;
+  --font-ui: "IBM Plex Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --font-mark: "Cinzel", "Times New Roman", serif;
+  --cell: 26px;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--desk); color: var(--fg); font-family: var(--font-ui); font-size: 13px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 56px; }
+.page { max-width: 1180px; margin: 0 auto; display: grid; gap: 16px; }
+button { font: inherit; color: inherit; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--sky); outline-offset: 1px; }
+
+/* ---------- 시연 막대 (목업 전용, 실제 화면 아님) ---------- */
+.demo { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; color: var(--muted); font-size: 12px; }
+.demo h1 { margin: 0; font-size: 17px; color: var(--fg); font-weight: 700; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.seg button { background: none; border: none; padding: 4px 12px; cursor: pointer; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--gold); color: var(--gold-ink); font-weight: 600; }
+.demo .hint { flex-basis: 100%; }
+
+/* ---------- plugin window ---------- */
+.win { background: var(--win); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,.45); min-width: 0; position: relative; }
+.titlebar { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: linear-gradient(#2a2f3a, #232731); border-bottom: 1px solid var(--line); }
+.titlebar .name { font-family: var(--font-mark); letter-spacing: .06em; color: var(--gold); font-size: 13px; }
+.titlebar .ctl { margin-left: auto; color: var(--faint); font-family: var(--font-num); }
+.topbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; padding: 8px 10px 0; border-bottom: 1px solid var(--line); }
+.tabs { display: flex; gap: 2px; overflow-x: auto; }
+.tab { color: var(--muted); background: transparent; border: 1px solid transparent; border-bottom: none; padding: 5px 14px; border-radius: 4px 4px 0 0; cursor: pointer; white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--fg); background: var(--win-3); border-color: var(--line); }
+.topbar .right { margin-left: auto; display: flex; gap: 8px; align-items: center; padding-bottom: 6px; }
+select { font: inherit; font-size: 12px; color: var(--fg); background: var(--win); border: 1px solid var(--line); border-radius: 3px; padding: 2px 6px; }
+.iconbtn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line); background: var(--win-2); color: var(--muted); cursor: pointer; font-weight: 600; }
+.status { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 6px 12px; background: var(--win-2); border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); align-items: center; }
+.status .s { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold-dim); flex: none; }
+.dot.live { background: var(--ok); } .dot.no { background: transparent; border: 1px solid var(--warn); }
+.toolbar { display: flex; gap: 14px; align-items: center; padding: 6px 12px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.toolbar label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.toolbar input { accent-color: var(--gold); }
+.banner { display: flex; gap: 8px; align-items: center; padding: 6px 12px; background: #1d2731; border-bottom: 1px solid #2f4252; font-size: 12px; }
+.banner b { color: var(--sky); font-family: var(--font-num); }
+.body { display: grid; grid-template-columns: minmax(0, max-content) minmax(320px, 1fr); min-height: 520px; }
+.detail > * { max-width: 460px; }
+@media (max-width: 900px) { .body { grid-template-columns: minmax(0, 1fr); } .detail { border-left: none; border-top: 1px solid var(--line); } }
+
+/* ---------- matrix ---------- */
+.matrixwrap { min-width: 0; display: flex; flex-direction: column; }
+.scroller { overflow: auto; max-height: 600px; }
+table.mx { border-collapse: separate; border-spacing: 0; font-size: 12px; }
+.mx th, .mx td { padding: 0; }
+.mx thead th { position: sticky; top: 0; background: var(--win); z-index: 2; font-weight: 500; height: 28px; border-bottom: 1px solid var(--line); }
+.mx thead th.jobh { width: var(--cell); min-width: var(--cell); color: var(--muted); }
+.mx thead th.jobh.on { color: var(--gold); box-shadow: inset 0 -2px 0 var(--gold); }
+.mx thead th.corner { left: 0; z-index: 3; min-width: 168px; }
+.mx th.gstart, .mx td.gstart { border-left: 1px solid var(--line-soft); }
+.mx td.colon { background: var(--col); }
+.mx tbody th { position: sticky; left: 0; z-index: 1; background: var(--win); text-align: left; font-weight: 400; padding: 0 10px; white-space: nowrap; }
+.mx tr.series th, .mx tr.series td { background: var(--win-3); height: 30px; border-top: 1px solid var(--line); }
+.mx tr.series th { cursor: pointer; font-weight: 600; }
+.mx tr.series th .tw { display: inline-block; width: 12px; color: var(--muted); font-weight: 400; }
+.mx tr.series th .cnt { font: 400 11px var(--font-num); color: var(--muted); margin-left: 8px; }
+.mx tr.series td { text-align: center; font: 11px var(--font-num); color: var(--muted); }
+.mx tr.series td.full { color: var(--gold); } .mx tr.series td.unk { color: var(--sky); }
+.mx tr.stage th { height: var(--cell); color: var(--fg); }
+.mx tr.stage th .no { display: inline-block; width: 16px; color: var(--faint); font: 11px var(--font-num); }
+.mx tr.stage th.sel { color: var(--gold); }
+.mx tr.stage td { height: var(--cell); text-align: center; vertical-align: middle; }
+.mx td.nacell { background: var(--na); }
+.mx tr.stage:hover td:not(.colon):not(.nacell), .mx tr.stage:hover th { background: #20242c; }
+.cellbtn { width: 22px; height: 20px; padding: 0; border: none; background: none; cursor: pointer; display: inline-grid; place-items: center; border-radius: 3px; }
+.cellbtn.selected { box-shadow: 0 0 0 2px var(--sky); }
+.g { width: 14px; height: 14px; display: block; flex: none; }
+.g-done { position: relative; background: var(--gold); border-radius: 2px; }
+.g-done.m::after { content: ''; position: absolute; right: -3px; top: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--fg); box-shadow: 0 0 0 1.5px var(--win); }
+.g-next { border: 2px solid var(--gold); border-radius: 2px; }
+.g-todo { width: 6px; height: 6px; border-radius: 50%; background: var(--todo); margin: 4px; }
+.g-unknown { color: var(--sky); font: 700 13px/14px var(--font-num); text-align: center; }
+.g-na { background: var(--na); border: 1px solid var(--line); border-radius: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 8px 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11.5px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ---------- detail ---------- */
+.detail { border-left: 1px solid var(--line); background: var(--win-2); padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; position: relative; }
+.detail .job { color: var(--muted); font-size: 12px; }
+.detail h2 { margin: 2px 0 0; font-size: 16px; font-weight: 600; text-wrap: balance; }
+.state { display: flex; gap: 8px; align-items: center; }
+.state b { font-weight: 600; }
+.state .why { color: var(--muted); font-size: 12px; }
+.statebox { padding: 8px 10px; border-radius: 4px; background: var(--win); border: 1px solid var(--line); display: grid; gap: 2px; }
+.sect { display: grid; gap: 6px; }
+.sect h3 { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: .06em; color: var(--muted); }
+.mt { width: 100%; border-collapse: collapse; font-size: 12px; }
+.mt th { text-align: right; font-weight: 500; color: var(--faint); font-size: 11px; padding: 3px 4px; border-bottom: 1px solid var(--line); }
+.mt th:first-child { text-align: left; }
+.mt td { padding: 5px 4px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+.mt tr.sub td { padding-top: 8px; color: var(--muted); font-size: 11px; border-bottom: none; }
+.mt td.n { font-family: var(--font-num); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.mt td.short { color: var(--gold); } .mt td.enough { color: var(--ok); }
+.src { display: block; font-size: 10.5px; color: var(--faint); }
+.src.warn { color: var(--warn); }
+.mt input { width: 60px; font: inherit; font-family: var(--font-num); text-align: right; background: var(--win); color: var(--fg); border: 1px solid var(--line); border-radius: 3px; padding: 1px 4px; }
+.note { color: var(--muted); font-size: 12px; margin: 0; }
+.bar { display: grid; gap: 4px; }
+.barrow { display: grid; grid-template-columns: 52px 1fr 40px; align-items: center; gap: 8px; font-size: 12px; }
+.track { height: 6px; background: var(--win); border-radius: 3px; overflow: hidden; border: 1px solid var(--line); }
+.track i { display: block; height: 100%; background: var(--gold); }
+.barrow .v { font-family: var(--font-num); color: var(--muted); text-align: right; font-size: 11px; }
+.actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; position: relative; }
+.btn { font-size: 12px; background: var(--win-3); border: 1px solid var(--line); border-radius: 3px; padding: 4px 10px; cursor: pointer; }
+.btn.primary { background: var(--gold); color: var(--gold-ink); border-color: var(--gold); font-weight: 600; }
+.btn:disabled { opacity: .45; cursor: default; }
+.linkish { background: none; border: none; color: var(--muted); font-size: 11.5px; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.fixrow { display: flex; flex-wrap: wrap; gap: 4px 12px; width: 100%; }
+.menu { position: absolute; bottom: calc(100% + 6px); right: 0; min-width: 200px; background: var(--win-3); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,.45); padding: 4px; display: grid; z-index: 5; }
+.menu button { text-align: left; background: none; border: none; padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; }
+.menu button:hover { background: var(--win-2); }
+.menu hr { border: none; border-top: 1px solid var(--line); margin: 4px 2px; }
+.menu .lab { padding: 4px 10px 2px; font-size: 10.5px; color: var(--faint); letter-spacing: .04em; }
+.help { position: absolute; top: 74px; right: 10px; width: min(340px, calc(100% - 20px)); background: var(--win-3); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 14px 40px rgba(0,0,0,.5); padding: 12px 14px; z-index: 6; display: grid; gap: 10px; font-size: 12px; }
+.help h3 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 600; }
+.help .row { display: flex; align-items: center; gap: 8px; }
+.help ul { margin: 0; padding-left: 16px; color: var(--muted); display: grid; gap: 2px; }
+
+/* ---------- remaining ---------- */
+.remain { padding: 14px; display: grid; gap: 14px; min-width: 0; }
+.goals { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.goal { display: inline-flex; align-items: center; gap: 6px; background: var(--win-3); border: 1px solid var(--line); border-radius: 3px; padding: 2px 4px 2px 8px; font-size: 12px; }
+.goal .left { color: var(--faint); font-size: 11px; } .goal .left.wait { color: var(--sky); }
+.goal button { background: none; border: none; color: var(--muted); cursor: pointer; padding: 0 4px; }
+.sums { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.sum { display: grid; gap: 0; }
+.sum .k { color: var(--muted); font-size: 11px; }
+.sum .v { font: 16px var(--font-num); font-variant-numeric: tabular-nums; }
+.sum .v small { color: var(--muted); font-size: 11px; }
+.sum .v.short { color: var(--warn); }
+.tblwrap { overflow-x: auto; }
+.rt { width: 100%; min-width: 480px; border-collapse: collapse; font-size: 12.5px; }
+.rt th { text-align: right; font-weight: 500; color: var(--faint); font-size: 11px; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+.rt th:first-child { text-align: left; }
+.rt td { padding: 6px 8px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+.rt td.n { font-family: var(--font-num); text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rt tr.grp td { color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; padding-top: 12px; }
+.chip { display: inline-block; padding: 0 6px; border-radius: 999px; font-size: 10.5px; border: 1px solid var(--gold-dim); color: var(--gold); margin-left: 4px; }
+@media (prefers-reduced-motion: no-preference) { .cellbtn { transition: box-shadow .12s; } }
+</style>
+
+<div class="page">
+  <div class="demo" aria-label="목업 시연 설정">
+    <h1>DuckbillRelic 목업 4</h1>
+    <span>버전</span>
+    <span class="seg" id="segVar"><button type="button" data-v="min">A 최소</button><button type="button" data-v="mid">B 중간</button></span>
+    <span>장면</span>
+    <span class="seg" id="segAch"><button type="button" data-a="0">첫 실행 (업적 기록 없음)</button><button type="button" data-a="1">업적 화면을 연 뒤</button></span>
+    <span class="hint">이 줄은 비교용이고 실제 화면에는 없습니다. 보유 개수와 진행 위치는 설명용 가상 값이고, 직업 머리 글자는 실제 화면에서 게임 직업 아이콘으로 바뀝니다. 레릭 이름은 나이트·목수만 게임 데이터 값으로 넣었습니다.</span>
+  </div>
+
+  <div class="win" role="application" aria-label="플러그인 화면 목업">
+    <div class="titlebar"><span class="name">DuckbillRelic</span><span class="ctl" aria-hidden="true">— ✕</span></div>
+    <div id="statusMid"></div>
+    <div class="topbar">
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="right" id="topRight"></div>
+    </div>
+    <div id="toolbar"></div>
+    <div id="banner"></div>
+    <div class="body" id="bodyMatrix">
+      <div class="matrixwrap">
+        <div class="scroller"><table class="mx" id="mx"></table></div>
+        <div id="legend"></div>
+      </div>
+      <aside class="detail" id="detail" aria-live="polite"></aside>
+    </div>
+    <div class="remain" id="bodyRemain" hidden></div>
+    <div class="help" id="help" hidden></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ---------- jobs ----------
+  const COMBAT = [
+    ['나','나이트'],['전','전사'],['암','암흑기사'],['건','건브레이커'],
+    ['백','백마도사'],['학','학자'],['점','점성술사'],['현','현자'],
+    ['몽','몽크'],['용','용기사'],['닌','닌자'],['사','사무라이'],['리','리퍼'],['바','바이퍼'],
+    ['음','음유시인'],['기','기공사'],['무','무도가'],
+    ['흑','흑마도사'],['솬','소환사'],['적','적마도사'],['픽','픽토맨서'],
+  ];
+  const COMBAT_START = new Set(['나','백','몽','음','흑']);
+  const CRAFT = [['목','목수'],['대','대장장이'],['갑','갑주제작사'],['보','보석공예가'],['가','가죽공예가'],['재','재봉사'],['연','연금술사'],['요','요리사'],['광','광부'],['원','원예가'],['어','어부']];
+  const CRAFT_START = new Set(['목','광']);
+  const JOBNAME = Object.fromEntries([...COMBAT, ...CRAFT]);
+  const ALL21 = COMBAT.map(x => x[0]);
+  const TOOLS = CRAFT.map(x => x[0]);
+
+  // ---------- materials (설명용 값) ----------
+  // w: inv 소지품 / bag 초코보 가방 / ret 집사 / key 고유 아이템 / weapon·gauge 직접 입력 / guide 게임에서 확인 / chain 이전 단계 무기
+  const M = {
+    damgum:{n:'라자한 담금질유',cur:'시학',c:15,own:1,w:'inv'}, yeong:{n:'사베네어 영약',cur:'시학',c:20,own:0},
+    atma:{n:'아트마 (12종 각 1개)',own:9,w:'key'}, book:{n:'황도 12문서',cur:'시학',c:100,own:0},
+    ink:{n:'고급 마법 잉크',cur:'시학',c:25,own:0}, materia:{n:'마테리아 라·다·가',own:41,w:'inv'}, alex:{n:'알렉산드라이트',own:34,w:'inv'},
+    nexus:{n:'넥서스 빛',own:null,w:'weapon'}, pure:{n:'순수한 알렉산드라이트',own:0}, sung:{n:'황도십이문서: 성천',own:0}, matter:{n:'조디악 물질',own:0}, scroll:{n:'조디악 두루마리',own:0},
+    star:{n:'별빛 크리스탈',own:1,w:'inv'}, shadow:{n:'그림자 크리스탈',own:1,w:'inv'}, gum:{n:'마법 고무',own:0}, harden:{n:'알라그 상급 경화약',own:0}, holy:{n:'신성수',own:1,w:'bag'}, cata:{n:'알라그 상급 마촉매',own:0},
+    oil:{n:'알라그 절령유',cur:'시학',c:350,own:2,w:'inv'}, sand:{n:'크리스탈 모래',own:18,w:'bag'}, rock:{n:'경화된 그림자 바위',cur:'시학',c:75,own:0},
+    cluster:{n:'활성화 클러스터',cur:'시학',c:40,own:0}, crystal:{n:'수수께끼의 결정',cur:'시학',c:100,own:0}, aink:{n:'고대 마법 잉크',cur:'시학',c:500,own:0},
+    unasp:{n:'난속성 크리스탈',own:420,w:'inv'}, pazu:{n:'파주주 깃털',own:1,w:'inv'}, iceunasp:{n:'난속성 얼음 크리스탈',own:0}, pagos:{n:'파고스 크리스탈',own:0}, louhi:{n:'로우히의 얼음 조각',own:0},
+    pyros:{n:'피로스 크리스탈',own:0}, penthe:{n:'펜테실레이아의 불씨',own:0}, hyda:{n:'히다토스 크리스탈',own:0}, dragon:{n:'수정룡의 비늘',own:0}, frag:{n:'에우레카의 파편',own:0},
+    scale:{n:'사베네어 비늘가루',cur:'시학',c:250,own:2,w:'inv'}, tortured:{n:'괴로운 기억 덩어리',own:12,w:'inv'}, sorrow:{n:'슬픈 기억 덩어리',own:20,w:'bag'}, harrow:{n:'두려운 기억 덩어리',own:7,w:'inv'},
+    brave:{n:'용맹한 기억 덩어리',own:6,w:'inv'}, bitter:{n:'씁쓸한 기억 덩어리',own:3,w:'ret'}, loath:{n:'버려진 유물',own:0}, passion:{n:'빛나는 격정 덩어리',own:0},
+    meteo:{n:'희소 메테오라이트',cur:'시학',c:500,own:0}, chond:{n:'희소 콘드라이트',cur:'시학',c:500,own:0}, achond:{n:'희소 아콘드라이트',cur:'시학',c:500,own:0}, crlite:{n:'크리스탈라이트',cur:'시학',c:500,own:0},
+    demi:{n:'데미아트마 6종 (각 3개)',own:11,w:'inv'}, arc1:{n:'초승달 광석',cur:'수리',c:500,own:3,w:'inv'}, glue:{n:'로네크 아교',cur:'길',c:300000,own:0}, sider:{n:'우토무 운철',own:0},
+    aether:{n:'에테르 4색 게이지 (각 10,000)',own:null,w:'gauge'}, arc2:{n:'상현달 광석',cur:'수리',c:500,own:0}, clay:{n:'그림자 점토',cur:'길',c:500000,own:0}, paste:{n:'크리스탈 점토',own:240,w:'inv'},
+    arc3:{n:'하현달 광석',cur:'수리',c:500,own:0}, whet:{n:'식칼 연마용 숫돌',cur:'길',c:500000,own:0}, dispel:{n:'환영 해제기 α·β·γ (각 100개)',own:0}, arc4:{n:'그믐달 광석',cur:'수리',c:500,own:0},
+    know:{n:'지식 크리스탈 기억 8분류',own:null,w:'guide'}, prev:{n:'이전 단계 무기',own:null,w:'chain'},
+    skytool:{n:'하늘강철 도구',cur:'길',c:80000,own:0}, mowen:{n:'모웬 도구',cur:'스크립',c:750,own:0},
+  };
+  const WHERE = { inv:'소지품', bag:'초코보 가방 · 11-09 22:41', ret:'집사 「라라」 · 11-07', key:'고유 아이템',
+    weapon:'무기 안 수치 · 직접 입력', gauge:'게이지 · 직접 입력', guide:'게임의 지식 크리스탈에서 확인', chain:'앞 단계를 마치면 생김' };
+  const CURRENCY = { '시학':1240, '수리':1720, '스크립':2150, '길':1234567 };
+  const manualW = m => m.w === 'weapon' || m.w === 'gauge';
+  const skipSum = m => m.w === 'guide' || m.w === 'chain';
+
+  const st = (n, mats, x) => Object.assign({n, mats: mats || null}, x || {});
+  const once = (id, per) => [id, per, true];
+  // 단계 이름: 게임 아이템에 붙는 접미어만. 접미어가 없는 단계는 번호만 (2026-11-10 결정)
+  const SERIES = [
+    {id:'zodiac', tab:'weapon', name:'조디악 웨폰', ach:[1], jobs:['나','전','백','학','몽','용','닌','음','흑','솬'],
+     items:{나:['커르타나','커르타나: 제니스','커르타나: 아트마','커르타나: 아니무스','커르타나: 노우스','커르타나: 넥서스','엑스칼리버','엑스칼리버: 제타']},
+     stages:[ st('',[['damgum',1]]), st('제니스',[['yeong',3]]), st('아트마',[['atma',12]]), st('아니무스',[['book',9]],{relicnote:true}),
+              st('노우스',[['ink',3],['materia',75],['alex',75]]), st('넥서스',[['nexus',2000]]), st('',[['pure',1],['sung',1],['matter',1],['scroll',1]]), st('제타') ]},
+    {id:'anima', tab:'weapon', name:'아니마 웨폰', ach:[3,4,5,6,7,8], jobs:['나','전','암','백','학','점','몽','용','닌','음','기','흑','솬'],
+     items:{나:['오트클레르: 아니마','오트클레르: 각성','알마스','알마스: 초전도','제후의 검','벼려진 제후의 검','에티르','에티르: 룩스']},
+     stages:[ st('아니마',[['star',1],['shadow',1]]), st('각성',[],{note:'지정 던전 10곳을 차례로 공략하는 단계입니다.'}), st('',[['gum',1],['harden',1],['holy',1],['cata',1]]), st('초전도',[['oil',5]]),
+              st('',[['sand',60],['rock',60]]), st('벼려진',[['cluster',50]]), st('',[['crystal',15]]), st('룩스',[['aink',1]]) ]},
+    {id:'eureka', tab:'weapon', name:'에우레카 웨폰', ach:[1,2,3,4], jobs:['나','전','암','백','학','점','몽','용','닌','사','음','기','흑','솬','적'],
+     items:{나:['갤러틴: 아네모스','엘리멘탈 한손검','피로스 한손검','안테아: 에우레카','안테아: 맞춤형']},
+     stages:[ st('아네모스',[['unasp',1300],['pazu',3]]), st('엘리멘탈',[['iceunasp',31],['pagos',500],['louhi',5]]), st('피로스',[['pyros',650],['penthe',5]]), st('에우레카',[['hyda',350],['dragon',5]]), st('맞춤형',[['frag',100]]) ]},
+    {id:'resist', tab:'weapon', name:'레지스탕스 웨폰', ach:[1,3,5,6], jobs:['나','전','암','건','백','학','점','몽','용','닌','사','음','기','무','흑','솬','적'],
+     items:{나:['오너바운드','보강된 오너바운드','오너바운드: 기억','법령 바스타드소드','보강된 법령 바스타드소드','군힐드의 검의 명예']},
+     stages:[ st('',[['scale',4]],{firstFree:true}), st('보강된',[['tortured',20],['sorrow',20],['harrow',20]]), st('기억',[['brave',6]]), st('법령',[['bitter',15]]), st('보강된 법령',[['loath',15]]), st('군힐드의 검',[['passion',15]]) ]},
+    {id:'mander', tab:'weapon', name:'맨더빌 웨폰', ach:[1,2,3,4], jobs:ALL21.filter(j => j !== '바' && j !== '픽'),
+     items:{나:['맨더빌 한손검','훌륭한 맨더빌 한손검','당당한 맨더빌 한손검',null]},
+     stages:[ st('맨더빌',[['meteo',3]]), st('훌륭한',[['chond',3]]), st('당당한',[['achond',3]]), st('맨더빌한',[['crlite',3]]) ]},
+    {id:'phantom', tab:'weapon', name:'팬텀 웨폰', ach:[1,2,3,5], jobs:ALL21,
+     items:{나:['팬텀 반그림자 한손검','팬텀 그림자 한손검','팬텀 어둠그림자 한손검','팬텀 달그림자 한손검','팬텀 숨은그림자 한손검']},
+     stages:[ st('반그림자',[once('demi',18),['arc1',3]]),
+              st('그림자',[once('glue',1),once('sider',1),once('aether',40000),['arc2',3],['prev',1]],{more:'인조 암흑물질 α·β·γ 각 1개'}),
+              st('어둠그림자',[once('clay',1),once('paste',1200),['arc3',3],['prev',1]],{more:'속성 첨가용 부재·금속재·합성수지 각 1개'}),
+              st('달그림자',[once('whet',1),once('dispel',300),['arc4',3],['prev',1]],{more:'식칼 강화용 합금·손잡이 재료·연마용 기름 각 1개'}),
+              st('숨은그림자',[once('know',8),['prev',1]]) ]},
+    {id:'sky', tab:'tool', name:'하늘강철 도구', ach:[5,6], jobs:TOOLS,
+     items:{목:['하늘강철 톱','하늘강철 톱+1','용시 톱','보강된 용시 톱','창천시 톱','창천건설자 톱']},
+     stages:[ st('하늘강철',[['skytool',1]]), st('하늘강철+1',null,{note:'직업별 HQ 제작·채집 재료 — 목업에서는 생략했습니다.'}), st('용시'), st('보강된 용시'), st('창천시'), st('창천건설자') ]},
+    {id:'mowen', tab:'tool', name:'모웬 도구', ach:[3,5,7], jobs:TOOLS,
+     items:{목:['모웬 톱','보강된 모웬 톱','공예관 톱','조이의 공예관 톱','조이의 빛나는 톱','노르브란트 선각자 톱','노르브란트 길잡이 톱']},
+     stages:[ st('모웬',[['mowen',1]]), st('보강된 모웬',null,{note:'직업별 수집품 납품 — 목업에서는 생략했습니다.'}), st('공예관'), st('조이의 공예관'), st('조이의 빛나는'), st('노르브란트 선각자'), st('노르브란트 길잡이') ]},
+    {id:'cosmic', tab:'tool', name:'우주 도구', ach:[1,2,3,4], cosmic:true, jobs:TOOLS,
+     items:{목:['우주 톱','외계 톱','초공간 톱','별들의 톱']},
+     stages:[ st('우주'), st('외계'), st('초공간'), st('별들의') ]},
+  ];
+  const S = Object.fromEntries(SERIES.map(s => [s.id, s]));
+  const stageLabel = (s, k) => s.stages[k-1].n;
+
+  // ---------- 설명용 진행 ----------
+  const sheetR = {
+    zodiac:{나:3,전:3,백:8,학:3,몽:3,용:3,닌:3,음:3,흑:3,솬:3},
+    anima:{나:8,전:1,암:1,백:1,학:1,점:1,몽:1,용:8,닌:1,음:1,기:8,흑:1,솬:1},
+    eureka:{나:1,사:1,적:4},
+    resist:{나:5,전:4,암:3,건:1,백:1,학:1,점:1,몽:1,용:1,닌:1,사:6,음:1,기:1,무:1,흑:1,솬:1,적:1},
+    mander:Object.fromEntries(S.mander.jobs.map(j => [j, 4])),
+    phantom:{나:2,전:1,백:1},
+    sky:{목:6,요:6,어:6}, mowen:{목:3,요:1,어:1}, cosmic:{목:2,요:2,어:3,광:1},
+  };
+  const special = {
+    'zodiac|백':{it:'cache'}, 'zodiac|솬':{it:'cache'}, 'zodiac|음':{noItem:true, man:3}, 'zodiac|용':{noItem:true, man:3},
+    'anima|학':{noItem:true}, 'anima|용':{it:'cache'}, 'anima|기':{noItem:true},
+    'eureka|나':{noItem:true}, 'eureka|사':{noItem:true, noAch:true, man:1},
+    'resist|무':{noItem:true}, 'resist|점':{it:'cache'}, 'resist|사':{noItem:true},
+    'mander|리':{noItem:true}, 'mander|무':{noItem:true}, 'mander|백':{it:'cache'}, 'mander|학':{it:'cache'}, 'mander|닌':{noItem:true}, 'mander|적':{noItem:true},
+    'cosmic|어':{noItem:true},
+  };
+  const P = {};
+  SERIES.forEach(s => {
+    P[s.id] = {};
+    Object.entries(sheetR[s.id] || {}).forEach(([j, r]) => {
+      const sp = special[s.id+'|'+j] || {};
+      P[s.id][j] = { it: sp.noItem ? null : [r, sp.it || 'item'], ach: sp.noAch ? 0 : Math.max(0, ...s.ach.filter(k => k <= r)), man: sp.man || 0, cap: null };
+    });
+  });
+  const questActive = { 'zodiac|4': '4개 중 2번째 진행 중' };
+  const onceDone = { 'phantom|1': true, 'phantom|2': true };
+
+  // ---------- state ----------
+  let V = 'min';
+  try { const h = location.hash.slice(1); if (h === 'min' || h === 'mid') V = h; } catch (e) {}
+  const ui = { tab:'weapon', sel:{s:'zodiac', j:'나', k:4}, achLoaded:false, collapsed:{}, onlyStarted:false, menu:false, help:false, fixOpen:false,
+               goals:[ {s:'resist',j:'전',to:6}, {s:'zodiac',j:'나',to:5}, {s:'phantom',j:'나',to:4}, {s:'anima',j:'학',to:8} ], override:{} };
+  const defaultSel = { weapon:{s:'zodiac', j:'나', k:4}, tool:{s:'mowen', j:'목', k:4} };
+
+  const has = (s, j) => S[s].jobs.includes(j);
+  const prog = (s, j) => P[s][j] || (P[s][j] = {it:null, ach:0, man:0, cap:null});
+  const autoTop = (s, j) => { const p = prog(s, j); return Math.max(p.it ? p.it[0] : 0, ui.achLoaded ? p.ach : 0); };
+  function reached(s, j) { const p = prog(s, j); const r = Math.max(autoTop(s, j), p.man); return p.cap != null ? Math.min(r, p.cap) : r; }
+  function unknownTop(s, j) {
+    const p = prog(s, j); if (ui.achLoaded || p.cap != null) return 0;
+    const star = Math.max(0, ...S[s].ach); return star > reached(s, j) ? star : 0;
+  }
+  function cellKind(s, j, k) {
+    if (!has(s, j)) return 'na';
+    const r = reached(s, j); if (k <= r) return 'done';
+    const u = unknownTop(s, j); if (k <= u) return 'unknown';
+    return (!u && k === r + 1) ? 'next' : 'todo';
+  }
+  function evidence(s, j, k) {
+    const p = prog(s, j);
+    if (k > autoTop(s, j)) return 'manual';
+    if (p.it && k === p.it[0]) return p.it[1];
+    if (ui.achLoaded && S[s].ach.includes(k) && k <= p.ach) return 'ach';
+    return 'implied';
+  }
+  const KIND = { done:'완료', next:'다음 단계', todo:'미완료', unknown:'확인 전', na:'해당 직업 없음' };
+  const EV = { item:'장비함에서 확인', cache:'환상의 옷장에서 마지막 확인 (11-02)', ach:'업적으로 확인', implied:'윗 단계가 확인되어 완료', manual:'직접 완료 표시' };
+  const glyph = (kind, ev) => kind === 'done' ? `<span class="g g-done${ev === 'manual' ? ' m' : ''}"></span>` : kind === 'unknown' ? '<span class="g g-unknown">?</span>' : `<span class="g g-${kind}"></span>`;
+  const relicName = (s, j, k) => (s.items[j] && s.items[j][k-1]) || null;
+  const titleOf = (s, j, k) => relicName(s, j, k) || `${s.name} ${k}단계${stageLabel(s, k) ? ' · ' + stageLabel(s, k) : ''}`;
+
+  // ---------- top ----------
+  function renderTop() {
+    const st = document.getElementById('statusMid');
+    st.innerHTML = V === 'mid' ? `<div class="status">
+      <span class="s"><select aria-label="캐릭터 선택" id="charMid"><option>모그리</option><option>초코보</option></select></span>
+      <span class="s"><i class="dot live"></i>소지품·장비함 실시간</span>
+      <span class="s"><i class="dot"></i>초코보 가방 11-09</span>
+      <span class="s"><i class="dot"></i>집사 2/3명</span>
+      <span class="s"><i class="dot"></i>환상의 옷장 11-02</span>
+      <span class="s"><i class="dot ${ui.achLoaded ? 'live' : 'no'}"></i>${ui.achLoaded ? '업적 11-10 09:12' : '업적 기록 없음'}</span></div>` : '';
+    const tabs = [['weapon','무기'],['tool','도구'],['remain','남은 재료']];
+    document.getElementById('tabs').innerHTML = tabs.map(([id, n]) => `<button class="tab" role="tab" data-tab="${id}" aria-selected="${ui.tab === id}">${n}</button>`).join('');
+    document.querySelectorAll('.tab').forEach(t => t.onclick = () => { ui.tab = t.dataset.tab; ui.menu = false; renderAll(); });
+    document.getElementById('topRight').innerHTML = V === 'min'
+      ? `<select aria-label="캐릭터 선택" id="charMin"><option>모그리</option><option>초코보</option></select><button type="button" class="iconbtn" id="helpBtn" aria-label="도움말" aria-expanded="${ui.help}">?</button>` : '';
+    const hb = document.getElementById('helpBtn'); if (hb) hb.onclick = () => { ui.help = !ui.help; renderHelp(); hb.setAttribute('aria-expanded', ui.help); };
+    const tb = document.getElementById('toolbar');
+    tb.innerHTML = V === 'mid' && ui.tab !== 'remain' ? `<div class="toolbar"><label><input type="checkbox" id="onlyStarted" ${ui.onlyStarted ? 'checked' : ''}> 진행 중인 계열만</label></div>` : '';
+    const os = document.getElementById('onlyStarted'); if (os) os.onchange = e => { ui.onlyStarted = e.target.checked; renderMatrix(); };
+    document.getElementById('banner').innerHTML = ui.achLoaded ? '' :
+      `<div class="banner"><b>?</b><span>업적 기록이 없어 일부 단계를 확인하지 못했습니다. 게임에서 업적 화면을 한 번 열어 주세요.</span></div>`;
+    const remain = ui.tab === 'remain';
+    document.getElementById('bodyMatrix').hidden = remain;
+    document.getElementById('bodyRemain').hidden = !remain;
+  }
+  function renderHelp() {
+    const el = document.getElementById('help'); el.hidden = !(V === 'min' && ui.help);
+    if (el.hidden) return;
+    el.innerHTML = `<h3>칸 모양</h3>
+      <div class="row">${glyph('done')}완료</div><div class="row">${glyph('next')}다음 단계</div><div class="row">${glyph('todo')}미완료</div>
+      <div class="row">${glyph('unknown')}확인 전 (업적 화면을 열면 채워짐)</div><div class="row"><span class="g g-na"></span>해당 직업 없음</div>
+      <div class="row"><span class="g g-done m"></span>직접 완료 표시한 칸</div>
+      <h3>마지막으로 읽은 정보</h3>
+      <ul><li>소지품·장비함: 실시간</li><li>초코보 가방: 11-09 22:41</li><li>집사: 2/3명 (열어 본 집사만)</li><li>환상의 옷장: 11-02</li><li>업적: ${ui.achLoaded ? '11-10 09:12' : '기록 없음'}</li></ul>
+      <button type="button" class="btn" id="helpClose">닫기</button>`;
+    el.querySelector('#helpClose').onclick = () => { ui.help = false; renderHelp(); renderTop(); };
+  }
+
+  // ---------- matrix ----------
+  function renderMatrix() {
+    const tool = ui.tab === 'tool';
+    const jobs = (tool ? CRAFT : COMBAT).map(([a]) => ({a, gstart: (tool ? CRAFT_START : COMBAT_START).has(a)}));
+    let list = SERIES.filter(s => s.tab === ui.tab);
+    if (V === 'mid' && ui.onlyStarted) list = list.filter(s => s.jobs.some(j => reached(s.id, j) > 0 || unknownTop(s.id, j) > 0));
+    let h = '<thead><tr><th class="corner"></th>';
+    jobs.forEach(o => h += `<th class="jobh${o.gstart ? ' gstart' : ''}${ui.sel.j === o.a ? ' on' : ''}" title="${JOBNAME[o.a]}">${o.a}</th>`);
+    h += '</tr></thead><tbody>';
+    list.forEach(s => {
+      const nFull = s.jobs.filter(j => reached(s.id, j) === s.stages.length).length;
+      const col = !!ui.collapsed[s.id];
+      h += `<tr class="series"><th data-series="${s.id}" tabindex="0" aria-expanded="${!col}"><span class="tw">${col ? '▸' : '▾'}</span>${s.name}<span class="cnt">${nFull}/${s.jobs.length}</span></th>`;
+      jobs.forEach(o => {
+        const cc = (o.gstart ? 'gstart' : '') + (ui.sel.j === o.a ? ' colon' : '');
+        if (!has(s.id, o.a)) { h += `<td class="${cc} nacell"></td>`; return; }
+        if (V === 'min') { h += `<td class="${cc}"></td>`; return; }
+        const r = reached(s.id, o.a); const full = r === s.stages.length; const unk = unknownTop(s.id, o.a) > 0;
+        h += `<td class="${cc}${full ? ' full' : ''}${unk ? ' unk' : ''}">${unk ? '?' : full ? '완' : r || '–'}</td>`;
+      });
+      h += '</tr>';
+      if (col) return;
+      s.stages.forEach((stg, i) => {
+        const k = i + 1; const selRow = ui.sel.s === s.id && ui.sel.k === k;
+        h += `<tr class="stage"><th class="${selRow ? 'sel' : ''}"><span class="no">${k}</span>${stg.n}</th>`;
+        jobs.forEach(o => {
+          const kind = cellKind(s.id, o.a, k);
+          const cls = (o.gstart ? 'gstart' : '') + (ui.sel.j === o.a ? ' colon' : '');
+          if (kind === 'na') { h += `<td class="${cls} nacell"></td>`; return; }
+          const ev = kind === 'done' ? evidence(s.id, o.a, k) : null;
+          const sel = ui.sel.s === s.id && ui.sel.j === o.a && ui.sel.k === k;
+          const tip = `${JOBNAME[o.a]} · ${titleOf(s, o.a, k)}&#10;${KIND[kind]}${ev ? ' · ' + EV[ev] : ''}`;
+          h += `<td class="${cls}"><button type="button" class="cellbtn${sel ? ' selected' : ''}" data-s="${s.id}" data-j="${o.a}" data-k="${k}" aria-label="${JOBNAME[o.a]} ${k}단계: ${KIND[kind]}" title="${tip}">${glyph(kind, ev)}</button></td>`;
+        });
+        h += '</tr>';
+      });
+    });
+    const mx = document.getElementById('mx'); mx.innerHTML = h + '</tbody>';
+    mx.querySelectorAll('.cellbtn').forEach(b => b.onclick = () => { ui.sel = {s:b.dataset.s, j:b.dataset.j, k:+b.dataset.k}; ui.menu = false; ui.fixOpen = false; renderMatrix(); renderDetail(); });
+    mx.querySelectorAll('tr.series th').forEach(th => {
+      const t = () => { ui.collapsed[th.dataset.series] = !ui.collapsed[th.dataset.series]; renderMatrix(); };
+      th.onclick = t; th.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); t(); } };
+    });
+    document.getElementById('legend').innerHTML = V === 'mid' ? `<div class="legend"><span>${glyph('done')}완료</span><span>${glyph('next')}다음 단계</span><span>${glyph('todo')}미완료</span><span>${glyph('unknown')}확인 전</span><span><span class="g g-na"></span>해당 없음</span><span><span class="g g-done m"></span>직접 표시</span></div>` : '';
+  }
+
+  // ---------- detail ----------
+  const fmt = n => n == null ? '—' : n.toLocaleString('ko-KR');
+  const ownOf = id => ui.override[id] != null ? ui.override[id] : M[id].own;
+  function reason(kind, ev, s, j, k) {
+    const p = prog(s.id, j);
+    if (kind === 'done') return EV[ev];
+    if (kind === 'unknown') return '업적 화면을 한 번 열면 확인됩니다.';
+    if (kind === 'next') return p.cap != null ? '판정을 직접 낮춘 상태입니다.' : '';
+    return p.cap != null && k > p.cap ? '판정을 직접 낮춘 상태입니다.' : '';
+  }
+  function matRow(id, per, isOnce, onceOk) {
+    const m = M[id]; const own = ownOf(id);
+    const srcMid = V === 'mid';
+    if (skipSum(m)) return `<tr><td>${m.n}<span class="src">${WHERE[m.w]}</span></td><td class="n">${fmt(per)}</td><td class="n">—</td></tr>`;
+    if (isOnce && onceOk) return `<tr><td>${m.n}${srcMid ? '<span class="src">해금 퀘스트 완료</span>' : ''}</td><td class="n">${fmt(per)}</td><td class="n enough">완료</td></tr>`;
+    const ownCell = manualW(m) ? `<input id="ov-${id}" type="number" min="0" inputmode="numeric" value="${own ?? ''}" placeholder="입력" aria-label="${m.n} 직접 입력">` : fmt(own);
+    const enough = own != null && own >= per;
+    let src = '';
+    if (manualW(m)) src = `<span class="src warn">${WHERE[m.w]}</span>`;
+    else if (srcMid) src = (m.w ? `<span class="src">${WHERE[m.w]}</span>` : '') + (m.cur ? `<span class="src">${m.cur} ${fmt(m.c)} / 개</span>` : '');
+    const tip = !srcMid && (m.w || m.cur) ? ` title="${[m.w ? WHERE[m.w] : '', m.cur ? m.cur + ' ' + fmt(m.c) + ' / 개' : ''].filter(Boolean).join(' · ')}"` : '';
+    return `<tr${tip}><td>${m.n}${src}</td><td class="n">${fmt(per)}</td><td class="n ${own == null ? '' : enough ? 'enough' : 'short'}">${ownCell}</td></tr>`;
+  }
+  function renderDetail() {
+    const {s:sid, j, k} = ui.sel; const s = S[sid]; const stg = s.stages[k-1];
+    if (!stg || !has(sid, j)) return;
+    const kind = cellKind(sid, j, k); const ev = kind === 'done' ? evidence(sid, j, k) : null;
+    const p = prog(sid, j);
+    const rn = relicName(s, j, k);
+    let h = `<div><div class="job">${JOBNAME[j]} · ${s.name} ${k}단계</div><h2>${titleOf(s, j, k)}</h2>${rn ? '' : '<div class="job">실제 화면에서는 이 직업의 레릭 이름이 나옵니다</div>'}</div>`;
+    const why = reason(kind, ev, s, j, k);
+    h += V === 'mid'
+      ? `<div class="statebox"><div class="state">${glyph(kind, ev)}<b>${KIND[kind]}</b></div>${why ? `<span class="state why">${kind === 'done' ? '근거: ' : ''}${why}</span>` : ''}</div>`
+      : `<div class="state">${glyph(kind, ev)}<b>${KIND[kind]}</b>${why ? `<span class="why">· ${why}</span>` : ''}</div>`;
+    if (kind === 'next' && questActive[sid+'|'+k]) h += `<p class="note">단계 퀘스트: ${questActive[sid+'|'+k]}</p>`;
+    if (V === 'mid' && stg.relicnote && (kind === 'next' || kind === 'todo')) {
+      const rows = [['몬스터',6,10],['던전',2,3],['돌발',1,3],['리브',3,3]];
+      h += `<div class="sect"><h3>황도 12문서 · 현재 권</h3><div class="bar">` + rows.map(([n,v,m]) => `<div class="barrow"><span>${n}</span><span class="track"><i style="width:${v/m*100}%"></i></span><span class="v">${v}/${m}</span></div>`).join('') + '</div></div>';
+    }
+    if (s.cosmic) h += '<p class="note">세부 버전과 연구 데이터는 게임의 우주 연구 화면에서 확인하세요.</p>';
+    else if (stg.mats && stg.mats.length && kind !== 'done') {
+      const per = stg.mats.filter(m => !m[2]); const on = stg.mats.filter(m => m[2]); const onceOk = !!onceDone[sid+'|'+k];
+      h += '<div class="sect"><h3>필요 재료</h3><table class="mt"><thead><tr><th>아이템</th><th>필요</th><th>보유</th></tr></thead><tbody>';
+      if (on.length) {
+        h += `<tr class="sub"><td colspan="3">캐릭터당 1회</td></tr>`;
+        on.forEach(([id, n]) => h += matRow(id, n, true, onceOk));
+        if (stg.more && V === 'mid') h += `<tr><td colspan="3" class="note">외 ${stg.more}</td></tr>`;
+        if (per.length) h += `<tr class="sub"><td colspan="3">무기마다</td></tr>`;
+      }
+      per.forEach(([id, n]) => h += matRow(id, n, false));
+      h += '</tbody></table>';
+      if (stg.firstFree && V === 'mid') h += '<p class="note">첫 무기는 퀘스트로 무료입니다. 이 캐릭터는 이미 받았습니다.</p>';
+      h += '</div>';
+    } else if (stg.note && kind !== 'done') h += `<p class="note">${stg.note}</p>`;
+
+    const isGoal = ui.goals.some(g => g.s === sid && g.j === j);
+    const full = reached(sid, j) >= s.stages.length;
+    const fixes = [];
+    if (kind === 'done' && ev === 'manual') fixes.push(['manualOff', '여기부터 직접 표시 해제']);
+    if (kind === 'done' && ev !== 'manual') fixes.push(['capDown', '여기부터 미완료로 고치기']);
+    if (kind === 'done' && (ev === 'item' || ev === 'cache') && p.it && k === p.it[0]) fixes.push(['clearObs', '이 확인 기록 지우기']);
+    if (p.cap != null) fixes.push(['capUndo', '고친 판정 되돌리기']);
+    const manualOn = kind !== 'done' ? ['manualOn', '여기까지 완료로 표시'] : null;
+    h += '<div class="actions">';
+    h += `<button type="button" class="btn primary" id="addGoal" ${isGoal || full ? 'disabled' : ''}>${isGoal ? '목표에 있음' : '목표에 추가'}</button>`;
+    if (V === 'min') {
+      h += `<button type="button" class="btn" id="moreBtn" aria-haspopup="menu" aria-expanded="${ui.menu}" aria-label="더 보기">⋯</button>`;
+      if (ui.menu) {
+        h += '<div class="menu" role="menu">';
+        if (manualOn) h += `<button type="button" role="menuitem" data-act="${manualOn[0]}">${manualOn[1]}</button>`;
+        h += '<button type="button" role="menuitem" data-act="map">교환 NPC 지도에 표시</button>';
+        if (fixes.length) { h += '<hr><div class="lab">판정이 틀렸다면</div>'; fixes.forEach(([a, t]) => h += `<button type="button" role="menuitem" data-act="${a}">${t}</button>`); }
+        h += '</div>';
+      }
+    } else {
+      if (manualOn) h += `<button type="button" class="btn" data-act="${manualOn[0]}">${manualOn[1]}</button>`;
+      h += '<button type="button" class="btn" data-act="map">교환 NPC 지도</button>';
+      if (fixes.length) {
+        h += `<div class="fixrow"><button type="button" class="linkish" id="fixToggle" aria-expanded="${ui.fixOpen}">판정이 틀렸다면 ${ui.fixOpen ? '▴' : '▾'}</button>`;
+        if (ui.fixOpen) fixes.forEach(([a, t]) => h += `<button type="button" class="linkish" data-act="${a}">${t}</button>`);
+        h += '</div>';
+      }
+    }
+    h += '</div>';
+    const d = document.getElementById('detail'); d.innerHTML = h;
+    const rerender = () => { ui.menu = false; renderMatrix(); renderDetail(); };
+    d.querySelectorAll('input[id^="ov-"]').forEach(inp => inp.onchange = () => { ui.override[inp.id.slice(3)] = inp.value === '' ? null : Math.max(0, parseInt(inp.value, 10) || 0); renderDetail(); });
+    d.querySelector('#addGoal').onclick = () => { ui.goals.push({s:sid, j, to:s.stages.length}); renderDetail(); };
+    const mb = d.querySelector('#moreBtn'); if (mb) mb.onclick = () => { ui.menu = !ui.menu; renderDetail(); };
+    const ft = d.querySelector('#fixToggle'); if (ft) ft.onclick = () => { ui.fixOpen = !ui.fixOpen; renderDetail(); };
+    const acts = {
+      manualOn: () => { p.man = k; if (p.cap != null && p.cap < k) p.cap = null; },
+      manualOff: () => { p.man = k - 1; }, capDown: () => { p.cap = k - 1; }, clearObs: () => { p.it = null; }, capUndo: () => { p.cap = null; },
+      map: () => {},
+    };
+    d.querySelectorAll('[data-act]').forEach(b => b.onclick = () => { acts[b.dataset.act](); rerender(); });
+  }
+
+  // ---------- remaining ----------
+  function renderRemain() {
+    const need = {}; const labels = []; const onceSeen = new Set(); let waiting = 0, guide = new Set();
+    ui.goals.forEach((g, gi) => {
+      const s = S[g.s]; const r = reached(g.s, g.j); const unk = unknownTop(g.s, g.j) > 0;
+      const label = `${JOBNAME[g.j]} · ${s.name}`;
+      if (unk) { waiting++; labels.push({label, gi, left:'업적 확인 전', wait:true}); return; }
+      labels.push({label, gi, left: g.to > r ? `${g.to - r}단계 남음` : '완료'});
+      for (let k = r + 1; k <= g.to; k++) (s.stages[k-1].mats || []).forEach(([id, per, isOnce]) => {
+        const m = M[id]; if (m.w === 'chain') return; if (m.w === 'guide') { guide.add(id); return; }
+        if (isOnce) { if (onceDone[g.s+'|'+k] || onceSeen.has(g.s+'|'+k+'|'+id)) return; onceSeen.add(g.s+'|'+k+'|'+id); }
+        need[id] = need[id] || {total:0, once:false, uses:new Set()}; need[id].total += per; need[id].once ||= !!isOnce; need[id].uses.add(`${JOBNAME[g.j]} ${s.name}`);
+      });
+    });
+    const rows = Object.entries(need).map(([id, o]) => { const m = M[id]; const own = ownOf(id); return {id, m, total:o.total, own, once:o.once, uses:[...o.uses], left: own == null ? null : Math.max(o.total - own, 0)}; });
+    const curNeed = {}; rows.forEach(r => { if (r.m.cur && r.left) curNeed[r.m.cur] = (curNeed[r.m.cur] || 0) + r.left * r.m.c; });
+    let h = `<div class="goals">${labels.map(g => `<span class="goal">${g.label}<span class="left${g.wait ? ' wait' : ''}">${g.left}</span><button type="button" data-gi="${g.gi}" aria-label="${g.label} 목표 삭제">✕</button></span>`).join('')}</div>`;
+    h += '<div class="sums">' + Object.entries(curNeed).map(([cur, v]) => {
+      const k = cur === '길' || cur === '스크립' ? cur : '알라그 석판: ' + cur;
+      return `<div class="sum"><span class="k">${k}</span><span class="v${v > CURRENCY[cur] ? ' short' : ''}">${fmt(v)} <small>/ 보유 ${fmt(CURRENCY[cur])}</small></span></div>`;
+    }).join('') + '</div>';
+    if (waiting || guide.size) h += `<p class="note">합계에서 빠진 것: ${[waiting ? `업적 확인 전 목표 ${waiting}개` : '', guide.size ? `게임에서만 확인하는 진행 ${guide.size}종` : ''].filter(Boolean).join(', ')}</p>`;
+    const TOMES = ['시학','수리'];
+    const groups = V === 'mid'
+      ? [['석판으로 교환', r => TOMES.includes(r.m.cur)], ['길·스크립으로 구매', r => r.m.cur && !TOMES.includes(r.m.cur)], ['콘텐츠 보상·기타', r => !r.m.cur && !manualW(r.m)], ['직접 입력', r => manualW(r.m)]]
+      : [['', () => true]];
+    h += '<div class="tblwrap"><table class="rt"><thead><tr><th>아이템</th><th>필요</th><th>보유</th><th>남음</th></tr></thead><tbody>';
+    groups.forEach(([label, f]) => {
+      let rs = rows.filter(f); if (!rs.length) return;
+      if (V === 'min') rs = rs.sort((a, b) => (b.left ?? 1e9) - (a.left ?? 1e9) || 0);
+      if (label) h += `<tr class="grp"><td colspan="4">${label}</td></tr>`;
+      rs.forEach(r => {
+        const tip = ` title="${r.uses.join(', ')}${r.m.cur ? ' · ' + r.m.cur + ' ' + fmt(r.m.c) + ' / 개' : ''}"`;
+        h += `<tr${tip}><td>${r.m.n}${r.once ? '<span class="chip">1회</span>' : ''}${V === 'mid' ? `<span class="src">${r.uses.join(', ')}</span>` : ''}</td><td class="n">${fmt(r.total)}</td><td class="n">${fmt(r.own)}</td><td class="n" style="color:${r.left ? 'var(--gold)' : 'var(--ok)'}">${r.left == null ? '입력 필요' : fmt(r.left)}</td></tr>`;
+      });
+    });
+    h += '</tbody></table></div>';
+    const el = document.getElementById('bodyRemain'); el.innerHTML = h;
+    el.querySelectorAll('button[data-gi]').forEach(b => b.onclick = () => { ui.goals.splice(+b.dataset.gi, 1); renderRemain(); });
+  }
+
+  // ---------- demo controls ----------
+  function renderDemo() {
+    document.querySelectorAll('#segVar button').forEach(b => { b.setAttribute('aria-pressed', b.dataset.v === V); b.onclick = () => { V = b.dataset.v; ui.menu = false; ui.help = false; try { history.replaceState(null, '', '#' + V); } catch (e) {} renderAll(); }; });
+    document.querySelectorAll('#segAch button').forEach(b => { b.setAttribute('aria-pressed', (b.dataset.a === '1') === ui.achLoaded); b.onclick = () => { ui.achLoaded = b.dataset.a === '1'; renderAll(); }; });
+  }
+  function renderAll() {
+    if (ui.tab !== 'remain' && S[ui.sel.s].tab !== ui.tab) ui.sel = Object.assign({}, defaultSel[ui.tab]);
+    renderDemo(); renderTop(); renderHelp();
+    if (ui.tab === 'remain') renderRemain(); else { renderMatrix(); renderDetail(); }
+  }
+  window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (h === 'min' || h === 'mid') { V = h; renderAll(); } });
+  renderAll();
+})();
+</script>

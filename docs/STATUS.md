@@ -12,20 +12,20 @@
   - 업적 조건 해석(Type 2·24), 업적 목록을 받기 전의 "미완료"는 모름.
   - 보유 관찰은 본 적 있는 최고 단계만 누적 저장, 판정은 단계 아이템 ID 목록으로만.
   - 재료: 팬텀 이전 단계 무기·숨은그림자 비용·KR 재료 이름, 레지스탕스 첫 무기 무료, 교환 단가는 게임 교환 목록에서.
-- 범위: 현재 출시된 모든 레릭 무기 6계열·도구 5계열과 남은 재료 합산. 우주 도구는 큰 단계만. [FEATURES](product/FEATURES.md).
-- 화면 결정(2026-11-10, 권장안 채택): 칸에는 결과 5가지만 + "근거 표시" 토글, 자동 판정 정정 버튼, 진행은 "완성 n/m", 집사는 연 시점 관찰만, 나이트는 검 기준, 장인 도구 최종 단계 보유 시 아래 단계 추론 유지(안내 한 줄), 직접 입력은 재료 합산에 쓰이는 값만. [SCREENS](product/SCREENS.md).
-- 목업 3차본: [mockups/mockup-v3.html](mockups/mockup-v3.html) (공유 사본: https://claude.ai/artifact/1bddKyBX15dFaEfaHkxENb, 비공개, 같은 링크가 2차본에서 3차본으로 바뀜).
+- 범위: 레릭 무기 6계열과 도구 3계열(하늘강철·모웬·우주)의 진행, 남은 재료 합산. 장인·찬란한 도구는 제외, 우주 도구는 큰 단계만(2026-11-10 결정). [FEATURES](product/FEATURES.md).
+- 화면 결정(2026-11-10): 목업 4 "A 최소" 방향. 칸에는 결과 5가지만, 근거는 상세 한 줄, 판정 정정은 [⋯] 메뉴, 진행은 "완성 n/m", 단계 행 이름은 번호 + 게임 접미어, 용어는 게임 UI 표기(장비함·환상의 옷장·추억의 보관함), 집사는 연 시점 관찰만, 나이트는 검 기준, 직접 입력은 재료 합산에 쓰이는 값만. [SCREENS](product/SCREENS.md).
+- 목업 4: [mockups/mockup-v4.html](mockups/mockup-v4.html) (공유 사본: https://claude.ai/artifact/1bddKyBX15dFaEfaHkxENb, 비공개. 같은 링크에 2·3차본이 이전 버전으로 남음).
 - 재검증 보고서 공유 사본: https://claude.ai/artifact/XgbsjCe4Y9xFCFrBrLuCEW (비공개). 원본 보고서·조사 노트는 저장소 밖 로컬 `reports/`·`research_notes/`에 있고, 확정 내용은 research·product 문서에 반영했다.
 - 원격 저장소: https://github.com/PlatyDuckbill/DuckbillRelic (`main`, 2026-11-10 첫 푸시).
 - 공용 설치 목록 [DuckbillRepo](https://github.com/PlatyDuckbill/DuckbillRepo)에 등록했다. 아직 `repo/release.json`이 없어 첫 배포 대기로 건너뛴다. 첫 배포 때 Tweak·Fisher와 같은 절차(버전 태그·정식 Release·`DuckbillRelic-<4자리 버전>.zip`과 `.zip.sha256`·태그 고정 아이콘 `assets/*.png`, 그다음 `main`의 `repo/release.json` 갱신)를 따르면 자동으로 목록에 추가된다.
 
 ## 남은 확인·결정
 
-- 목업 3차본에 대한 사용자 확인.
+- 목업 4 "A 최소"의 세부 확인(공통 접미어가 없는 단계 행 표시 방식 등).
 - 원본 시트 작성자에게 설명문·팁 사용 허락을 받을지 결정. 허락 없이는 수치만 별도 검증해 쓴다.
-- 실기 확인 대기: 업적 목록을 불러온 상태가 지역 이동·캐릭터 전환 뒤에도 유지되는지, KR Dalamud의 ClientStructs 버전과 `IUnlockState` 유무, 레릭 `Flags`·투영대 보관 가능 여부, 황도 12문서 비트. 목록은 [CLIENT-STATE](research/CLIENT-STATE.md#확인-대기-실기).
-- 자료 정리 남음: 에우레카·장인·찬란한 도구 전 직업 아이템 ID, 모든 계열 교환 단가(SpecialShop), 제타·조디악 재제작 재료, 레지스탕스 재료 KR 이름, 하늘강철·모웬 2단계 이후 재료.
+- 실기 확인 대기: 업적 목록을 불러온 상태가 지역 이동·캐릭터 전환 뒤에도 유지되는지, KR Dalamud의 ClientStructs 버전과 `IUnlockState` 유무, 레릭 `Flags`·환상의 옷장 보관 가능 여부, 황도 12문서 비트. 목록은 [CLIENT-STATE](research/CLIENT-STATE.md#확인-대기-실기).
+- 자료 정리 남음: 에우레카 전 직업 아이템 ID, 모든 계열 교환 단가(SpecialShop), 제타·조디악 재제작 재료, 레지스탕스 재료 KR 이름, 하늘강철·모웬 2단계 이후 재료.
 
 ## 다음 작업 하나
 
-목업 3차본을 확인받아 화면 구성을 확정한다.
+목업 4 "A 최소"를 확정하고 구현 계획(첫 화면부터)을 세운다.
